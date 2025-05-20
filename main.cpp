@@ -18,7 +18,7 @@ private:
     string walletId;
     double balance;
 
-    // Simple password hash function
+    // Simple password hash function, currently unused
     string hashPassword(const string& pwd) const {
         string hash = "";
         for(int i = 0; i < pwd.length(); i++) {
@@ -84,6 +84,7 @@ public:
     }
     
     void printUserInfo() {
+    	cout << "=====USER INFO=====\n";
     	cout << "username: " +  username + "\n";
     	cout << "fullname: " + fullName + "\n";
     	cout << "email: " + email + "\n";
@@ -111,6 +112,7 @@ private:
             	 << users[i]->getPassword() << ","
                  << users[i]->getFullName() << ","
                  << users[i]->getEmail() << ","
+                 << users[i]->getIsAdmin() << ","
                  << users[i]->getWalletId() << ","
                  << users[i]->getBalance() << "\n";
         }
@@ -129,6 +131,7 @@ private:
         while (getline(file, line) && userCount < 100) {
             string username, password, fullName, email, walletId;
             double balance;
+            bool isAdmin;
             int pos = 0;
             
             // Parse CSV line
@@ -154,12 +157,18 @@ private:
             
             pos = line.find(',');
             if (pos == string::npos) continue;
+            isAdmin = line.substr(0, pos) == "1";
+            line = line.substr(pos + 1);
+
+            
+            pos = line.find(',');
+            if (pos == string::npos) continue;
             walletId = line.substr(0, pos);
             line = line.substr(pos + 1);
             
             balance = atof(line.c_str());
             
-            users[userCount++] = new User(username, username, fullName, email, balance);
+            users[userCount++] = new User(username, username, fullName, email, balance, isAdmin);
         }
         return true;
     }
@@ -254,7 +263,7 @@ public:
         }
         
         if (!fromUser || !toUser) {
-            cout << "Error: One or both users not found\n";
+            cout << "Error: User not found\n";
             return false;
         }
         
@@ -298,6 +307,14 @@ public:
         }
         return false;
     }
+    
+    // Show all user info
+    void showAllUserInfo() {
+    	for(int i = 0; i < userCount; i++) {
+    		users[i]->printUserInfo();
+		}
+	}
+    
 };
 
 // Show main menu
@@ -342,7 +359,6 @@ void handleRegistration(SystemManager& system) {
     cout << "Enter password: ";
     cin >> password;
     
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cout << "Enter full name: ";
     getline(cin, fullName);
     
@@ -367,11 +383,9 @@ void handleUserMenu(SystemManager& system, const string& username, User* loginUs
         if (!(cin >> choice)) {
             cout << "Invalid input. Please enter a number.\n";
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             continue;
         }
         
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         
         switch (choice) {
             case 0:
@@ -445,11 +459,9 @@ void handleAdminMenu(SystemManager& system, const string& username, User* loginU
         if (!(cin >> choice)) {
             cout << "Invalid input. Please enter a number.\n";
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             continue;
         }
         
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         
         switch (choice) {
             case 0:
@@ -458,10 +470,8 @@ void handleAdminMenu(SystemManager& system, const string& username, User* loginU
                 break;
                 
             case 1: { // View All Account Information
-                double balance = system.getUserBalance(username);
                 cout << "\n=== ALL ACCOUNT INFORMATION ===\n";
-                
-                
+                system.showAllUserInfo();
                 break;
             }
             case 2: { 
@@ -504,10 +514,10 @@ void handleLogin(SystemManager& system) {
         
         User* loginUser = system.findUser(username);
         
-		if(username != "admin") {
-			handleUserMenu(system, username, loginUser);
-		} else {
+		if(loginUser->getIsAdmin()) {
 			handleAdminMenu(system, username, loginUser);
+		} else {
+			handleUserMenu(system, username, loginUser);
 		}
     } else {
         cout << "Login failed. Please check your information.\n";
@@ -525,11 +535,9 @@ int main() {
         if (!(cin >> choice)) {
             cout << "Invalid input. Please enter a number.\n";
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            continue;
+            break;
         }
         
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         
         switch (choice) {
             case 1:
