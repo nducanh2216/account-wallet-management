@@ -360,7 +360,7 @@ void handleRegistration(SystemManager& system) {
     cin >> password;
     
     cout << "Enter full name: ";
-    getline(cin, fullName);
+    cin >> fullName;
     
     cout << "Enter email: ";
     cin >> email;
