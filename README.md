@@ -8,7 +8,7 @@ Hệ thống đăng nhập và đăng ký tài khoản và quản lý ví điể
 
 | Họ và tên | MSSV | Công việc được giao |
 |-----------|------|---------------------|
-| Nguyen Duc Anh | K24DTCN170| - Tao project, làm chức năng đăng nhập, đăng ký, ghi dữ liệu ra file |
+| Nguyen Duc Anh | K24DTCN170| - Tao project, làm chức năng đăng nhập, đăng ký|
 | Trần Thị B | 123457 | - ABC |
 | Lê Văn C | 123458 | - ABC |
 
