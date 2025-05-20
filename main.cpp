@@ -140,9 +140,9 @@ private:
             username = line.substr(0, pos);
             line = line.substr(pos + 1);
             
-             pos = line.find(',');
+            pos = line.find(',');
             if (pos == string::npos) continue;
-            username = line.substr(0, pos);
+            password = line.substr(0, pos);
             line = line.substr(pos + 1);
             
             pos = line.find(',');
@@ -168,7 +168,7 @@ private:
             
             balance = atof(line.c_str());
             
-            users[userCount++] = new User(username, username, fullName, email, balance, isAdmin);
+            users[userCount++] = new User(username, password, fullName, email, balance, isAdmin);
         }
         return true;
     }
